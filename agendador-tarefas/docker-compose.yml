@@ -1,0 +1,23 @@
+services:
+
+  mongo:
+    # MongoDB 7 fixado devido à incompatibilidade do MongoDB 8 com o kernel Linux 6.19
+    image: mongo:7.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: db_agendador
+
+  agendador-tarefas:
+    build: .
+    image: stecarvalho/agendador-tarefas:latest
+    container_name: agendador-tarefas
+    ports:
+      - "8081:8081"
+    environment:
+      USUARIO_URL: http://usuario:8080
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/db_agendador
+    depends_on:
+      - mongo
