@@ -1,0 +1,24 @@
+services:
+
+  db_usuario:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_DB: db_usuario
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5433:5432"
+
+  app:
+    build: .
+    image: stecarvalho/usuario/latest
+    container_name: usuario
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db_usuario
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - db_usuario
