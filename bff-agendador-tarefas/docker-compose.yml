@@ -1,0 +1,75 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_usuario
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5434:5432"
+
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: db_agendador
+
+  usuario:
+    build: ../usuario
+    image: stecarvalho/usuario:latest
+    container_name: usuario
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/db_usuario
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      - postgres
+
+  agendador-tarefas:
+    build: ../agendador-tarefas
+    image: stecarvalho/agendador-tarefas:latest
+    container_name: agendador-tarefas
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_MONGODB_URI: mongodb://mongo:27017/db_agendador
+      USUARIO_URL: http://usuario:8080/usuario
+    depends_on:
+      - mongo
+      - usuario
+
+  notificacao:
+    build: ../notificacao
+    image: stecarvalho/notificacao:latest
+    container_name: notificacao
+    ports:
+      - "8082:8082"
+    env_file:
+      - ../notificacao/.env
+
+  bff-agendador-tarefas:
+    build: .
+    image: stecarvalho/bff-agendador-tarefas:latest
+    container_name: bff-agendador-tarefas
+    ports:
+      - "8083:8083"
+    environment:
+      USUARIO_URL: http://usuario:8080/usuario
+      AGENDADOR_TAREFAS_URL: http://agendador-tarefas:8081/tarefas
+      NOTIFICACAO_URL: http://notificacao:8082/email
+    depends_on:
+      - usuario
+      - agendador-tarefas
+      - notificacao
+
+networks:
+  default:
+    driver: bridge

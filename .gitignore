@@ -1,0 +1,25 @@
+# Variáveis de ambiente (nunca versionar credenciais)
+.env
+
+# Build
+build/
+target/
+out/
+bin/
+.gradle/
+!**/gradle/wrapper/gradle-wrapper.jar
+!**/.mvn/wrapper/maven-wrapper.jar
+HELP.md
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.sts4-cache/
+.apt_generated/
