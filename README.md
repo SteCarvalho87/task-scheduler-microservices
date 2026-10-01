@@ -10,7 +10,10 @@ A aplicação é composta por quatro serviços — **Usuários, Tarefas, Notific
 
 A demonstração abaixo apresenta o fluxo principal da aplicação: autenticação do usuário, criação e agendamento de uma tarefa pelo BFF e recebimento automático da notificação por e-mail antes do evento.
 
-<!-- GIF da demonstração será adicionado aqui -->
+![Demontração do Agendador de tarefas](docs/images/demo-readme.gif)
+
+
+▶️ *[Assistir à demonstração completa no YouTube]([SEU_LINK_DO_YOUTUBE](https://www.youtube.com/watch?v=LufSkH1UrVE))*
 
 ## 🏗️ Arquitetura
 
