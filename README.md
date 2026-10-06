@@ -13,7 +13,7 @@ A demonstração abaixo apresenta o fluxo principal da aplicação: autenticaç�
 ![Demontração do Agendador de tarefas](docs/images/demo-readme.gif)
 
 
-▶️ *[Assistir à demonstração completa no YouTube]([SEU_LINK_DO_YOUTUBE](https://www.youtube.com/watch?v=LufSkH1UrVE))*
+▶️ *[Assistir à demonstração completa no YouTube](https://www.youtube.com/watch?v=LufSkH1UrVE)*
 
 ## 🏗️ Arquitetura
 
