@@ -9,11 +9,18 @@ import com.stephanie.usuario.infrastructure.entity.Telefone;
 import com.stephanie.usuario.infrastructure.entity.Usuario;
 import com.stephanie.usuario.infrastructure.exceptions.ConflictException;
 import com.stephanie.usuario.infrastructure.exceptions.ResourceNotFoundException;
+import com.stephanie.usuario.infrastructure.exceptions.UnauthorizedException;
 import com.stephanie.usuario.infrastructure.repository.EnderecoRepository;
 import com.stephanie.usuario.infrastructure.repository.TelefoneRepository;
 import com.stephanie.usuario.infrastructure.repository.UsuarioRepository;
 import com.stephanie.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +31,7 @@ public class UsuarioService {
     private final UsuarioConverter usuarioConverter;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
     private final EnderecoRepository enderecoRepository;
     private final TelefoneRepository telefoneRepository;
 
@@ -32,6 +40,20 @@ public class UsuarioService {
         usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         Usuario usuario = usuarioConverter.paraUsuario(usuarioDTO);
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
+    }
+
+    public String autenticarUsuario(UsuarioDTO usuarioDTO){
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            usuarioDTO.getEmail(),
+                            usuarioDTO.getSenha())
+            );
+        }catch(BadCredentialsException | UsernameNotFoundException | AuthorizationDeniedException e){
+            throw new UnauthorizedException("Usuário ou senha inválidos", e.getCause());
+        }
+
+        return "Bearer " + jwtUtil.generateToken(authentication.getName());
     }
 
     public void emailExiste(String email) {
