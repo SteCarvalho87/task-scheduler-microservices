@@ -49,11 +49,11 @@ public class UsuarioService {
                             usuarioDTO.getEmail(),
                             usuarioDTO.getSenha())
             );
+            return "Bearer " + jwtUtil.generateToken(authentication.getName());
+
         }catch(BadCredentialsException | UsernameNotFoundException | AuthorizationDeniedException e){
             throw new UnauthorizedException("Usuário ou senha inválidos", e.getCause());
         }
-
-        return "Bearer " + jwtUtil.generateToken(authentication.getName());
     }
 
     public void emailExiste(String email) {
